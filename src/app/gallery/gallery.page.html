@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Galería</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadImages()" aria-label="Recargar">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (loading()) {
+    <div class="state"><ion-spinner name="crescent"></ion-spinner></div>
+  } @else if (errorMessage()) {
+    <ion-text color="danger"><p>{{ errorMessage() }}</p></ion-text>
+  } @else {
+    <!-- 1 columna en móvil, 2 en tablet, 3 en escritorio -->
+    <ion-grid>
+      <ion-row>
+        @for (image of images(); track image.name) {
+          <ion-col size="12" size-sm="6" size-lg="4">
+            <ion-card>
+              <ion-img [src]="image.url" [alt]="image.name"></ion-img>
+              <ion-card-header>
+                <ion-card-title>{{ image.name }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ image.size / 1048576 | number: '1.1-1' }} MB · {{ image.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-button fill="clear" [href]="image.url" target="_blank">
+                <ion-icon slot="start" name="open-outline"></ion-icon>
+                Ver original
+              </ion-button>
+            </ion-card>
+          </ion-col>
+        } @empty {
+          <ion-col size="12" class="state">
+            <ion-icon name="image-outline"></ion-icon>
+            <p>No hay imágenes en el bucket.</p>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+</ion-content>
